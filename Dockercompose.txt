@@ -1,0 +1,89 @@
+Docker compose install for Linux
+--------------------------------
+DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+ mkdir -p $DOCKER_CONFIG/cli-plugins
+ curl -SL https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+
+vi dockercompose.yml
+--------------------
+---
+version: "3.9"
+services:
+  springboothello-service1:
+    image: sarath750/springboot-hello:v1
+    container_name: springboot-hello
+    ports:
+     - "8080:8080"
+  MySQL-service2:
+    image: mysql:8.0
+    container_name: MySQL-DB
+    environment:
+      - MYSQL_ROOT_PASSWORD=Admin#123 
+    volumes:
+      - db:/var/lib/mysql
+    ports:
+      - '3306:3306'
+volumes:
+  db:
+    driver: local
+
+
+
+
+
+
+docker ps -a
+------------
+mysql container
+springboot container
+
+
+docker exec -it <mysql container-id> /bin/bash
+
+mysql -u root -p  
+password:Admin#123
+
+CREATE DATABASE southwind;
+show databases;
+use mysql;
+CREATE TABLE IF NOT EXISTS products (
+         productID    INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+         productCode  CHAR(3)       NOT NULL DEFAULT '',
+         name         VARCHAR(30)   NOT NULL DEFAULT '',
+         quantity     INT UNSIGNED  NOT NULL DEFAULT 0,
+         price        DECIMAL(7,2)  NOT NULL DEFAULT 99999.99,
+         PRIMARY KEY  (productID)
+       );
+INSERT INTO products VALUES (1001, 'PEN', 'Pen Red', 5000, 1.23);
+
+SELECT * FROM products;
+
+
++-----------+-------------+---------+----------+-------+
+| productID | productCode | name    | quantity | price |
++-----------+-------------+---------+----------+-------+
+|      1001 | PEN         | Pen Red |     5000 |  1.23 |
++-----------+-------------+---------+----------+-------+
+
+
+docker compose down   (our both springboot_container1 and mysql_container2 will be down) 
+
+docker compose up -d (our both contaners will be running up as usual)
+
+
+docker exec -it <mysql container-id> /bin/bash
+
+mysql -u root -p  
+password:Admin#123
+use mysql;
+
+(our created database is gone so we need to use volumes inside MySQL-service2 )
+
+
+
+docker volume ls (to check volumes)
+
+
+
+
